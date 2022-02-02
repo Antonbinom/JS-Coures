@@ -10,6 +10,8 @@ let fullPrice;
 let allServicePrice;
 let servicePercentPrice;
 let rollback = 10;
+let sum;
+let servicePrice;
 
 const isNumber = function (num) { // объявляю функцию isNumber в которой...
 	return !isNaN(parseFloat(num) && isFinite(num)); // возвращаю условие "не"NaN(пропускающее число с точкой и конечное число)
@@ -18,17 +20,17 @@ const isNumber = function (num) { // объявляю функцию isNumber в
 const asking = function () { // функция в которую помещаем "вопросы"
 	title = prompt('Как называется ваш проект?', 'New');
 	screens = prompt('Какие типы экранов нужно разработать?', 'Простые, интерактивные');
-	screenPrice = prompt('Сколько будет стоить данная работа?', '12000');
 
-	while (!isNumber(screenPrice)) { // пока переданное в screenPrice значение не будет соответствовать isNumber
-		screenPrice = prompt('Сколько будет стоить данная работа?', '12000'); // будет снова и снова выводит вопрос
-	}
+	do {
+		screenPrice = prompt('Сколько будет стоить данная работа?', '12000');
+	} while (!isNumber(screenPrice)); // будет снова и снова выводит вопрос
+
 
 	adaptive = confirm('Нужен ли адаптив на сайте?');
 };
 
 const getAllServicePrices = function () {
-	let sum = 0;
+	sum = 0;
 
 	for (let i = 0; i < 2; i++) { // перебираем вопросы
 
@@ -37,7 +39,12 @@ const getAllServicePrices = function () {
 		} else if (i === 1) {
 			service2 = prompt('Какой дополнительный тип услуги нужен?', 'Чат-бот');
 		}
-		sum += +prompt('Сколько это будет стоить?', '3000'); // при выполнении каждой итерации суммирует введенное значение с sum
+
+		do {
+			servicePrice = prompt('Сколько это будет стоить?', '3000'); // при выполнении каждой итерации суммирует введенное значение с sum
+		}
+		while (!isNumber(servicePrice));
+		sum = sum + parseInt(servicePrice);
 	}
 	return sum; // выводит сумму всех введенных значений
 };
@@ -75,7 +82,7 @@ function getRollbackMessage() {
 }
 asking(); // запускаем функцию внутри которой переменные с вопросами
 allServicePrice = getAllServicePrices();
-screenPrice = +screenPrice;
+screenPrice = parseFloat(screenPrice);
 fullPrice = getFullPrice();
 title = getTitle();
 servicePercentPrice = getServicePercentPrice();
@@ -89,4 +96,4 @@ console.log('Сумма всех дополнительных услуг', allSe
 console.log('Сумма всех услуг ' + fullPrice + ' рублей');
 console.log(getRollbackMessage(fullPrice));
 console.log('Итог с учетом отката ' + servicePercentPrice + ' рублей');
-console.log('Верстка секций - ' + screens.toLowerCase().split(', '));
+console.log('Верстка секций - ' + screens.toLowerCase().split(','));
