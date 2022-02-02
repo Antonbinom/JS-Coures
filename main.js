@@ -1,41 +1,43 @@
-(function () {
-	'use strict';
-})();
+'use strict';
+
 
 let title = prompt('Как называется ваш проект?');
 let screens = prompt('Какие типы экранов нужно разработать ?');
 let screenPrice = +prompt('Сколько будет стоить данная работа?', '12000');
 let adaptive = confirm('Нужен ли адаптив на сайте?');
+
 let service1 = prompt('Какой дополнительный тип услуги нужен?');
 let servicePrice1 = +prompt('Сколько это будет стоить?', '10000');
 let service2 = prompt('Какой дополнительный тип услуги нужен?');
 let servicePrice2 = +prompt('Сколько это будет стоить?', '5000');
-let rollback = 10;
-let fullPrice = screenPrice + servicePrice1 + servicePrice2;
-let servicePercentPrice = Math.ceil(fullPrice - fullPrice * (rollback / 100));
 
-const getAllServicePrice = function (service1, service2) {
-	return service1 + service2;
+let rollback = 10;
+let fullPrice;
+let servicePercentPrice;
+let allServicePrice;
+
+const getAllServicePrice = function () {
+	return servicePrice1 + servicePrice2;
 };
 
-function getFullPrice(mainService, addServices) {
-	return mainService + addServices;
+function getFullPrice() {
+	return screenPrice + allServicePrice;
 }
 
-function getTitle(title) {
-	return title.trim().charAt(0).toUpperCase() + title.trim().slice(1).toLowerCase();
+function getTitle() {
+	return title.trim()[0].toUpperCase() + title.trim().slice(1).toLowerCase();
 }
 
-function getServicePercentPrices(fullPrice, rollback) {
+function getServicePercentPrices() {
 	return Math.ceil(fullPrice - fullPrice * (rollback / 100));
 }
 
 function showTypeOf(variable) {
-	return console.log(variable, typeof variable);
+	console.log(variable, typeof variable);
 }
 
 function showScreens() {
-	return console.log(screens.toLowerCase().split().join());
+	console.log(screens.toLowerCase().split().join());
 }
 
 function getRollbackMessage() {
@@ -50,16 +52,16 @@ function getRollbackMessage() {
 	}
 }
 
-const allServicePrice = getAllServicePrice(servicePrice1, servicePrice2);
-fullPrice = getFullPrice(screenPrice, allServicePrice);
-title = getTitle(title);
-servicePercentPrice = getServicePercentPrices(fullPrice, rollback);
+allServicePrice = getAllServicePrice();
+fullPrice = getFullPrice();
+title = getTitle();
+servicePercentPrice = getServicePercentPrices();
 
 showTypeOf(title);
 showTypeOf(fullPrice);
 showTypeOf(adaptive);
 showScreens();
 
-console.log(getRollbackMessage());
+console.log(getRollbackMessage(fullPrice));
 console.log(servicePercentPrice);
 console.log(screens.toLowerCase().split(', '));
