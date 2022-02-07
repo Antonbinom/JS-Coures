@@ -2,7 +2,7 @@
 
 const appData = {
 	title: '',
-	screens: [],
+	screens: [], // пустой массив
 	adaptive: true,
 	services: {},
 	screenPrice: 0,
@@ -25,11 +25,19 @@ const appData = {
 	},
 
 	asking: function () { // функция в которую помещаем "вопросы"
-		appData.title = prompt('Как называется ваш проект?', 'New');
+
+		do {
+			appData.title = prompt('Как называется ваш проект?', 'New');
+		}
+		while (appData.isNumber(appData.title) || appData.title == 0);
 
 		for (let i = 0; i < 2; i++) {
-			let name = prompt('Какие типы экранов нужно разработать?');
+			let name;
 			let price = 0;
+			do {
+				name = prompt('Какие типы экранов нужно разработать?');
+			}
+			while (appData.isNumber(name) || name == 0);
 
 			do {
 				price = prompt('Сколько будет стоить данная работа?', '12000');
@@ -39,29 +47,35 @@ const appData = {
 			appData.screens.push({
 				id: i,
 				name: name,
-				price: price
+				price: +price
 			});
 		}
 
 		for (let i = 0; i < 2; i++) { // перебираем вопросы
-			let name = prompt('Какой дополнительный тип услуги нужен?');
+			let name;
 			let price = 0;
+			do {
+				if (name[1] == name[0]) {
+					name = i + '.' + prompt('Какой дополнительный тип услуги нужен?');
+				}
+			}
+			while (appData.isNumber(name) || name == 0);
 
 			do { // выводим вопрос
 				appData.servicePrice = prompt('Сколько это будет стоить?', '3000');
 			}
 			while (!appData.isNumber(price)); // пока не пройдет проверку выводит вопрос
 
-			appData.services[name] = +price;
+			appData.services[name] = +appData.servicePrice;
+
 		}
 
 		appData.adaptive = confirm('Нужен ли адаптив на сайте?');
 	},
-
 	addPrices: function () {
-		for (let screen of appData.screens) {
-			appData.screenPrice += +screen.price;
-		}
+		appData.screenPrice = appData.screens.reduce(function (sum, item) {
+			return sum + item.price;
+		}, 0);
 
 		for (let key in appData.services) {
 			appData.allServicePrices += appData.services[key];
@@ -91,14 +105,13 @@ const appData = {
 			return 'Что то пошло не так';
 		}
 	},
-
 	logger: function () {
 		console.log('Сумма всех услуг ' + appData.fullPrice + ' рублей');
 		console.log(appData.getRollbackMessage(appData.fullPrice));
 		console.log('Итог с учетом отката ' + appData.servicePercentPrice + ' рублей');
 		console.log(appData.screens);
+		console.log(appData.services);
 	}
-
 };
 
 appData.start();
