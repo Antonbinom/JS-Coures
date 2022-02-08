@@ -60,11 +60,11 @@ const appData = {
 			while (appData.isNumber(name) || name == 0);
 
 			do { // выводим вопрос
-				appData.servicePrice = prompt('Сколько это будет стоить?', '3000');
+				price = prompt('Сколько это будет стоить?', '3000');
 			}
 			while (!appData.isNumber(price)); // пока не пройдет проверку выводит вопрос
 
-			appData.services[name] = +appData.servicePrice;
+			appData.services[name] = +price;
 
 		}
 
