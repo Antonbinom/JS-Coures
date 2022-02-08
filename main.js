@@ -55,9 +55,7 @@ const appData = {
 			let name;
 			let price = 0;
 			do {
-				if (name[1] == name[0]) {
-					name = i + '.' + prompt('Какой дополнительный тип услуги нужен?');
-				}
+				name = i + '.' + prompt('Какой дополнительный тип услуги нужен?');
 			}
 			while (appData.isNumber(name) || name == 0);
 
