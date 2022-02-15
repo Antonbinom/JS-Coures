@@ -62,7 +62,6 @@ const appData = {
 		fullTotalCount.value = appData.fullPrice; // сумма верстки + доп
 		totalCountRollback.value = appData.servicePercentPrice; // итог с учетом отката
 	},
-
 	// Результат проверки полей
 	checkAddScreens: function () {
 		if (appData.addScreens() === true) { // если при проверке полей возвращается true
