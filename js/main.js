@@ -10,12 +10,15 @@ const inputRangeValue = document.querySelector('.rollback .range-value');
 
 const startBtn = document.getElementsByClassName('handler_btn')[0];
 const resetBtn = document.getElementsByClassName('handler_btn')[1];
+
 const mainControlsInputs = document.querySelectorAll('.main-controls .custom-checkbox, select, .screen-btn, input:not([disabled], [type="range"])');
-const inputCms = document.querySelector('#cms-open');
+const checkboxes = document.querySelectorAll('.custom-checkbox');
+
 const cmsBlock = document.querySelector('.hidden-cms-variants');
 const otherBlock = cmsBlock.querySelector('.main-controls__input');
 
 const selectCms = document.querySelector('#cms-select');
+const inputCms = document.querySelector('#cms-open');
 const otherInput = cmsBlock.querySelector('#cms-other-input');
 
 const inputCollect = document.getElementsByClassName('total-input');
@@ -48,7 +51,7 @@ const appData = {
 		startBtn.addEventListener('click', this.checkAddScreens.bind(this)); // Запуск расчетов при нажатии на кнопку Рассчитать
 		resetBtn.addEventListener('click', this.reset.bind(this)); // Запуск расчетов при нажатии на кнопку Рассчитать
 		btnPlus.addEventListener('click', this.addScreenBlock.bind(this)); // Запуск при нажатии на кнопку +
-		inputRange.addEventListener('input', this.getRollbackPercent);
+		inputRange.addEventListener('input', this.getRollbackPercent.bind(this));
 		inputCms.addEventListener('change', this.openCms);
 		selectCms.addEventListener('change', this.chooseCms);
 		otherInput.addEventListener('input', this.otherCmsPercent.bind(this));
@@ -200,14 +203,16 @@ const appData = {
 		this.servicePercentPrice = Math.ceil(this.fullPrice - this.fullPrice * (this.rollback / 100)); // стоимость с учетом отката
 
 		console.log(this.cmsPercent);
+		console.log(this.rollback);
 	},
 
 	// Значение бегунка заноситься в свойство rollback
 	getRollbackPercent: function () {
 		inputRangeValue.textContent = inputRange.value + "%";
-		this.rollback = inputRange.value;
+		this.rollback = +inputRange.value;
 
 		totalCountRollback.value = Math.ceil(fullTotalCount.value - fullTotalCount.value * (this.rollback / 100)); // изменение стоимости с учетом отката при изменении процента
+		console.log(this.rollback);
 	},
 
 	disabled: function () {
@@ -230,7 +235,6 @@ const appData = {
 			item.removeAttribute("disabled");
 		});
 
-		const checkboxes = document.querySelectorAll('.custom-checkbox');
 		checkboxes.forEach(item => item.checked = false);
 
 		screens.forEach((item, index) => {
