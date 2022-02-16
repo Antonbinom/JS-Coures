@@ -10,6 +10,13 @@ const inputRangeValue = document.querySelector('.rollback .range-value');
 
 const startBtn = document.getElementsByClassName('handler_btn')[0];
 const resetBtn = document.getElementsByClassName('handler_btn')[1];
+const mainControlsInputs = document.querySelectorAll('.main-controls .custom-checkbox, select, .screen-btn, input:not([disabled], [type="range"])');
+const inputCms = document.querySelector('#cms-open');
+const cmsBlock = document.querySelector('.hidden-cms-variants');
+const otherBlock = cmsBlock.querySelector('.main-controls__input');
+
+const selectCms = document.querySelector('#cms-select');
+const otherInput = cmsBlock.querySelector('#cms-other-input');
 
 const inputCollect = document.getElementsByClassName('total-input');
 const total = inputCollect[0];
@@ -32,17 +39,23 @@ const appData = {
 	fullPrice: 0, // итоговая стоимость
 	rollback: 0, // процент отката
 	servicePercentPrice: 0, // стоимость с учетом отката
+	cmsBlock: [],
+	cmsPercent: 0,
 
 	// Инициализируем методы
 	init: function () {
 		this.addTitle(); // Запуск при загрузке страницы
 		startBtn.addEventListener('click', this.checkAddScreens.bind(this)); // Запуск расчетов при нажатии на кнопку Рассчитать
-		btnPlus.addEventListener('click', this.addScreenBlock); // Запуск при нажатии на кнопку +
-		inputRange.addEventListener('input', this.getRollbackPercent.bind(this));
+		resetBtn.addEventListener('click', this.reset.bind(this)); // Запуск расчетов при нажатии на кнопку Рассчитать
+		btnPlus.addEventListener('click', this.addScreenBlock.bind(this)); // Запуск при нажатии на кнопку +
+		inputRange.addEventListener('input', this.getRollbackPercent);
+		inputCms.addEventListener('change', this.openCms);
+		selectCms.addEventListener('change', this.chooseCms);
+		otherInput.addEventListener('input', this.otherCmsPercent.bind(this));
+
 	},
 
 	addTitle: () => document.title = title.textContent, // Заголовок страницы равен заголовку h1
-
 
 	// запускаем методы рассчета стоимости верстки
 	start: function () {
@@ -51,6 +64,8 @@ const appData = {
 		this.addPrices(); // расчеты
 		this.showResult(); // результаты
 		// this.logger();
+		this.disabled();
+		this.changeButtons();
 	},
 
 	// Итого
@@ -85,6 +100,7 @@ const appData = {
 				count: +input.value, // количество экранов
 				price: +select.value * +input.value // произведение цены экрана на количество
 			});
+
 		});
 
 		// проверка полей на заполнение
@@ -99,7 +115,6 @@ const appData = {
 
 	// добавляем новый блок с экранами
 	addScreenBlock: function () {
-
 		const cloneScreen = screens[0].cloneNode(true); // клонируем оригинал блока
 		screens[screens.length - 1].after(cloneScreen); // вставляем клон после оригинала
 
@@ -123,7 +138,6 @@ const appData = {
 			const check = item.querySelector('input[type="checkbox"]');
 			const input = item.querySelector('input[type="text"]');
 			const label = item.querySelector('label');
-
 			if (check.checked) { // проверка чекбокса
 				this.servicesNumber[label.textContent] = +input.value; //передаем в объект servicesNumber значение инпутов  otherItemsNumber
 			}
@@ -132,6 +146,35 @@ const appData = {
 
 	// Делаем расчеты
 
+	// Показываем/скрываем select с CMS
+	openCms: function () {
+		otherBlock.style.display = "none";
+		selectCms.selectedIndex = 0;
+		if (this.checked) {
+			cmsBlock.style.display = "flex";
+		} else {
+			cmsBlock.style.display = "none";
+		}
+	},
+
+	chooseCms: function () {
+		const selectName = this.options[this.selectedIndex].value;
+		if (selectName == "other") {
+			otherBlock.style.display = "flex";
+		} else if (selectName == "50") {
+			appData.cmsPercent = +this.value;
+			otherBlock.style.display = "none";
+			console.log(this.value);
+		} else {
+			otherBlock.style.display = "none";
+		}
+		// console.log(+otherInput.value);
+	},
+
+	otherCmsPercent: function () {
+		this.cmsPercent = +otherInput.value;
+		console.log(this.cmsPercent);
+	},
 	// перебираем элементы в массиве с экранами
 	addPrices: function () {
 		for (let screen of this.screens) {
@@ -152,10 +195,11 @@ const appData = {
 			this.servicePricesPercent += this.screenPrice * (this.servicesPercent[key] / 100); // стоимость доп услуг %
 		}
 
-		this.fullPrice = +this.screenPrice + this.servicePricesNumber + this.servicePricesNumber; // итоговая стоимость
-
+		this.fullPrice = (+this.screenPrice + this.servicePricesNumber + this.servicePricesNumber) // итоговая стоимость
+		this.fullPrice -= this.fullPrice * (this.cmsPercent / 100);
 		this.servicePercentPrice = Math.ceil(this.fullPrice - this.fullPrice * (this.rollback / 100)); // стоимость с учетом отката
 
+		console.log(this.cmsPercent);
 	},
 
 	// Значение бегунка заноситься в свойство rollback
@@ -164,6 +208,67 @@ const appData = {
 		this.rollback = inputRange.value;
 
 		totalCountRollback.value = Math.ceil(fullTotalCount.value - fullTotalCount.value * (this.rollback / 100)); // изменение стоимости с учетом отката при изменении процента
+	},
+
+	disabled: function () {
+		const mainControlsInputs = document.querySelectorAll('.main-controls .custom-checkbox, select, .screen-btn, input:not([disabled], [type="range"])');
+		mainControlsInputs.forEach(item => {
+			item.setAttribute("disabled", true);
+		});
+	},
+
+	changeButtons: function () {
+		startBtn.style.display = "none";
+		resetBtn.style.display = "flex";
+	},
+
+	reset: function () {
+		startBtn.style.display = "flex";
+		resetBtn.style.display = "none";
+
+		mainControlsInputs.forEach(item => {
+			item.removeAttribute("disabled");
+		});
+
+		const checkboxes = document.querySelectorAll('.custom-checkbox');
+		checkboxes.forEach(item => item.checked = false);
+
+		screens.forEach((item, index) => {
+			if (index > 0) {
+				item.remove();
+			}
+		});
+		const screenSelect = document.querySelector('select');
+		screenSelect.selectedIndex = 0;
+
+		let input = document.querySelector('input');
+		let select = document.querySelectorAll('select');
+
+		this.screenPrice = 0;
+		this.screenNumber = 0;
+		this.servicePricesPercent = 0;
+		this.servicePricesNumber = 0;
+		this.fullPrice = 0;
+		this.servicePercentPrice = 0;
+		this.servicesPercent = {};
+		this.servicesNumber = {};
+		this.screens = [];
+		this.rollback = 0;
+		this.cmsPercent = 0;
+
+		inputRange.value = 0;
+		inputRangeValue.textContent = inputRange.value + "%";
+		input.value = '';
+		select.value = 0;
+
+		inputCms.checked = false;
+		cmsBlock.style.display = "none";
+		otherInput.value = '';
+
+
+		this.addPrices();
+		this.addServices();
+		this.showResult();
 	},
 
 	logger: function () {
