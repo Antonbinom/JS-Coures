@@ -167,7 +167,7 @@ const appData = {
 		} else if (selectName == "50") {
 			appData.cmsPercent = +this.value;
 			otherBlock.style.display = "none";
-			console.log(this.value);
+			console.log(appData.cmsPercent);
 		} else {
 			otherBlock.style.display = "none";
 		}
