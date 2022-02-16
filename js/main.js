@@ -55,7 +55,6 @@ const appData = {
 		inputCms.addEventListener('change', this.openCms);
 		selectCms.addEventListener('change', this.chooseCms);
 		otherInput.addEventListener('input', this.otherCmsPercent.bind(this));
-
 	},
 
 	addTitle: () => document.title = title.textContent, // Заголовок страницы равен заголовку h1
@@ -228,26 +227,18 @@ const appData = {
 	},
 
 	reset: function () {
-		startBtn.style.display = "flex";
-		resetBtn.style.display = "none";
+		this.objectPropertiesReset();
+		this.screensReset();
+		this.disabledAttributeReset();
+		this.cmsCheckboxReset();
+		this.buttonsReset();
+		this.inputRangeReset();
+		this.addPrices();
+		this.addServices();
+		this.showResult();
+	},
 
-		mainControlsInputs.forEach(item => {
-			item.removeAttribute("disabled");
-		});
-
-		checkboxes.forEach(item => item.checked = false);
-
-		screens.forEach((item, index) => {
-			if (index > 0) {
-				item.remove();
-			}
-		});
-		const screenSelect = document.querySelector('select');
-		screenSelect.selectedIndex = 0;
-
-		let input = document.querySelector('input');
-		let select = document.querySelectorAll('select');
-
+	objectPropertiesReset: function () {
 		this.screenPrice = 0;
 		this.screenNumber = 0;
 		this.servicePricesPercent = 0;
@@ -259,22 +250,42 @@ const appData = {
 		this.screens = [];
 		this.rollback = 0;
 		this.cmsPercent = 0;
+	},
 
-		inputRange.value = 0;
-		inputRangeValue.textContent = inputRange.value + "%";
+	screensReset: function () {
+		screens.forEach((item, index) => {
+			if (index > 0) {
+				item.remove();
+			}
+		});
+		const screenSelect = document.querySelector('select');
+		let input = document.querySelector('input');
+		let select = document.querySelectorAll('select');
+		screenSelect.selectedIndex = 0;
 		input.value = '';
 		select.value = 0;
+	},
 
+	disabledAttributeReset: function () {
+		mainControlsInputs.forEach(item => {
+			item.removeAttribute("disabled");
+		});
+
+		checkboxes.forEach(item => item.checked = false);
+	},
+	cmsCheckboxReset: function () {
 		inputCms.checked = false;
 		cmsBlock.style.display = "none";
 		otherInput.value = '';
-
-
-		this.addPrices();
-		this.addServices();
-		this.showResult();
 	},
-
+	inputRangeReset: function () {
+		inputRange.value = 0;
+		inputRangeValue.textContent = inputRange.value + "%";
+	},
+	buttonsReset: function () {
+		startBtn.style.display = "flex";
+		resetBtn.style.display = "none";
+	},
 	logger: function () {
 		console.log(this.fullPrice);
 		console.log(screens);
