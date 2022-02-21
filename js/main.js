@@ -46,7 +46,7 @@ const appData = {
 	cmsPercent: 0,
 
 	// Инициализируем методы
-	init: function () {
+	init() {
 		this.addTitle(); // Запуск при загрузке страницы
 		startBtn.addEventListener('click', this.checkAddScreens.bind(this)); // Запуск расчетов при нажатии на кнопку Рассчитать
 		resetBtn.addEventListener('click', this.reset.bind(this)); // Запуск расчетов при нажатии на кнопку Рассчитать
@@ -60,7 +60,7 @@ const appData = {
 	addTitle: () => document.title = title.textContent, // Заголовок страницы равен заголовку h1
 
 	// запускаем методы рассчета стоимости верстки
-	start: function () {
+	start() {
 		this.addScreens(); // экраны
 		this.addServices(); // услуги
 		this.addPrices(); // расчеты
@@ -71,7 +71,7 @@ const appData = {
 	},
 
 	// Итого
-	showResult: function () {
+	showResult() {
 		total.value = this.screenPrice; // сумма верстки экранов
 		totalCount.value = this.screenNumber; // количество экранов
 		totalCountOther.value = this.servicePricesPercent + this.servicePricesNumber; // сумма доп услуг
@@ -79,7 +79,7 @@ const appData = {
 		totalCountRollback.value = this.servicePercentPrice; // итог с учетом отката
 	},
 	// Результат проверки полей
-	checkAddScreens: function () {
+	checkAddScreens() {
 		if (this.addScreens() === true) { // если при проверке полей возвращается true
 			this.start(); // запускаем расчеты
 		} else {
@@ -88,7 +88,7 @@ const appData = {
 	},
 
 	// добавляем в массив элементы с типом, количеством экранов и суммарной стоимостью
-	addScreens: function () {
+	addScreens() {
 		this.screens = [];
 
 		screens = document.querySelectorAll('.screen'); // переопределяем переменную screens
@@ -116,14 +116,14 @@ const appData = {
 	},
 
 	// добавляем новый блок с экранами
-	addScreenBlock: function () {
+	addScreenBlock() {
 		const cloneScreen = screens[0].cloneNode(true); // клонируем оригинал блока
 		screens[screens.length - 1].after(cloneScreen); // вставляем клон после оригинала
 
 	},
 
 	// Добавляем дополнительные услуги
-	addServices: function () {
+	addServices() {
 		// перебираем коллекцию импутов с процентами
 		otherItemsPercent.forEach(item => {
 			const check = item.querySelector('input[type="checkbox"]');
@@ -149,7 +149,7 @@ const appData = {
 	// Делаем расчеты
 
 	// Показываем/скрываем select с CMS
-	openCms: function () {
+	openCms() {
 		otherBlock.style.display = "none";
 		selectCms.selectedIndex = 0;
 		if (this.checked) {
@@ -159,26 +159,23 @@ const appData = {
 		}
 	},
 
-	chooseCms: function () {
+	chooseCms() {
 		const selectName = this.options[this.selectedIndex].value;
 		if (selectName == "other") {
 			otherBlock.style.display = "flex";
 		} else if (selectName == "50") {
 			appData.cmsPercent = +this.value;
 			otherBlock.style.display = "none";
-			console.log(appData.cmsPercent);
 		} else {
 			otherBlock.style.display = "none";
 		}
-		// console.log(+otherInput.value);
 	},
 
-	otherCmsPercent: function () {
+	otherCmsPercent() {
 		this.cmsPercent = +otherInput.value;
-		console.log(this.cmsPercent);
 	},
 	// перебираем элементы в массиве с экранами
-	addPrices: function () {
+	addPrices() {
 		for (let screen of this.screens) {
 			this.screenPrice += +screen.price; // суммируем стоимость всех типов экранов
 		}
@@ -198,35 +195,31 @@ const appData = {
 		}
 
 		this.fullPrice = (+this.screenPrice + this.servicePricesNumber + this.servicePricesNumber) // итоговая стоимость
-		this.fullPrice -= this.fullPrice * (this.cmsPercent / 100);
+		this.fullPrice += this.fullPrice * (this.cmsPercent / 100);
 		this.servicePercentPrice = Math.ceil(this.fullPrice - this.fullPrice * (this.rollback / 100)); // стоимость с учетом отката
-
-		console.log(this.cmsPercent);
-		console.log(this.rollback);
 	},
 
 	// Значение бегунка заноситься в свойство rollback
-	getRollbackPercent: function () {
+	getRollbackPercent() {
 		inputRangeValue.textContent = inputRange.value + "%";
 		this.rollback = +inputRange.value;
 
 		totalCountRollback.value = Math.ceil(fullTotalCount.value - fullTotalCount.value * (this.rollback / 100)); // изменение стоимости с учетом отката при изменении процента
-		console.log(this.rollback);
 	},
 
-	disabled: function () {
+	disabled() {
 		const mainControlsInputs = document.querySelectorAll('.main-controls .custom-checkbox, select, .screen-btn, input:not([disabled], [type="range"])');
 		mainControlsInputs.forEach(item => {
 			item.setAttribute("disabled", true);
 		});
 	},
 
-	changeButtons: function () {
+	changeButtons() {
 		startBtn.style.display = "none";
 		resetBtn.style.display = "flex";
 	},
 
-	reset: function () {
+	reset() {
 		this.objectPropertiesReset();
 		this.screensReset();
 		this.disabledAttributeReset();
@@ -238,7 +231,7 @@ const appData = {
 		this.showResult();
 	},
 
-	objectPropertiesReset: function () {
+	objectPropertiesReset() {
 		this.screenPrice = 0;
 		this.screenNumber = 0;
 		this.servicePricesPercent = 0;
@@ -252,7 +245,7 @@ const appData = {
 		this.cmsPercent = 0;
 	},
 
-	screensReset: function () {
+	screensReset() {
 		screens.forEach((item, index) => {
 			if (index > 0) {
 				item.remove();
@@ -266,27 +259,27 @@ const appData = {
 		select.value = 0;
 	},
 
-	disabledAttributeReset: function () {
+	disabledAttributeReset() {
 		mainControlsInputs.forEach(item => {
 			item.removeAttribute("disabled");
 		});
 
 		checkboxes.forEach(item => item.checked = false);
 	},
-	cmsCheckboxReset: function () {
+	cmsCheckboxReset() {
 		inputCms.checked = false;
 		cmsBlock.style.display = "none";
 		otherInput.value = '';
 	},
-	inputRangeReset: function () {
+	inputRangeReset() {
 		inputRange.value = 0;
 		inputRangeValue.textContent = inputRange.value + "%";
 	},
-	buttonsReset: function () {
+	buttonsReset() {
 		startBtn.style.display = "flex";
 		resetBtn.style.display = "none";
 	},
-	logger: function () {
+	logger() {
 		console.log(this.fullPrice);
 		console.log(screens);
 		console.log(this.servicePercentPrice);
